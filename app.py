@@ -38,6 +38,7 @@ def main():
     bucket_name = st.secrets["bucket_name"]
     data_dir = st.secrets["data_dir"]
     result_dir = st.secrets["result_dir"]
+    serial_code = st.secrets["serial_code"]
     data_path_list = load_data(conn, bucket_name, data_dir)
     label1_list = []
     label2_list = []
@@ -63,6 +64,7 @@ def main():
             key=f"{i}",
             horizontal=True,
             label_visibility="visible" if DEBUG else "collapsed",
+            index=None,
         )
 
         label1_list.append(label1)
@@ -86,7 +88,7 @@ def main():
     elif st.session_state.finished:
         st.button("解答終了", disabled=True)
         st.write("これで実験は終了です。ありがとうございました。")
-        st.write("シリアルコード2は「849201」です。")
+        st.write(f"シリアルコード2は{serial_code}です。")
         
 
 
