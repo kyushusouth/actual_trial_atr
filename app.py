@@ -4,7 +4,7 @@ from IPython.display import Audio
 import random
 import datetime
 
-DEBUG = True
+DEBUG = False
 
 
 class MyAudio(Audio):
@@ -31,6 +31,9 @@ def load_data(_conn, bucket_name, data_dir):
 
 
 def main():
+    if "finished" not in st.session_state:
+        st.session_state.finished = False
+        
     conn = st.connection("s3", type=FilesConnection)
     bucket_name = st.secrets["bucket_name"]
     data_dir = st.secrets["data_dir"]
@@ -71,15 +74,20 @@ def main():
 
         st.divider()
 
-    if st.button("Finish"):
-        st.write("これで実験は終了です。このページを閉じていただいて構いません。")
-        st.write("解答ありがとうございました。")
+    if not st.session_state.finished and st.button("解答を終える"):
+        st.session_state.finished = True
         current_time = datetime.datetime.now()
         formatted_time = current_time.strftime("%Y-%m-%d-%H-%M-%S")
         conn.fs.mkdirs(f"{bucket_name}/{data_dir}/{result_dir}", exist_ok=True)
         with conn.fs.open(f"{bucket_name}/{data_dir}/{result_dir}/{formatted_time}.txt", "w") as f:
             for label1, label2, label3, label4, label5, ans in zip(label1_list, label2_list, label3_list, label4_list, label5_list, ans_list):
                 f.write(f"{label1},{label2},{label3},{label4},{label5},{ans}\n")
+        st.rerun()
+    elif st.session_state.finished:
+        st.button("解答終了", disabled=True)
+        st.write("これで実験は終了です。ありがとうございました。")
+        st.write("シリアルコード2は「849201」です。")
+        
 
 
 if __name__ == "__main__":
