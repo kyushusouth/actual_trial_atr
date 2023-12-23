@@ -31,7 +31,7 @@ def load_data(_conn, bucket_name, data_dir):
 
 
 def main():
-    conn = st.experimental_connection("s3", type=FilesConnection)
+    conn = st.connection("s3", type=FilesConnection)
     bucket_name = st.secrets["bucket_name"]
     data_dir = st.secrets["data_dir"]
     result_dir = st.secrets["result_dir"]
